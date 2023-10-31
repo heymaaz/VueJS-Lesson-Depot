@@ -15,7 +15,8 @@
         <header>
             <h1>{{sitename}}</h1>
         </header>
-        <button v-on:click="clickCart()"> {{cartCount}} <i class="fa-solid fa-cart-shopping"></i>Checkout </button>
+        <button v-if="cartCount<1 && !showcart" disabled="disabled"> {{cartCount}} <i class="fa-solid fa-cart-shopping"></i>Checkout </button>
+        <button v-else v-on:click="clickCart()"> {{cartCount}} <i class="fa-solid fa-cart-shopping"></i>Checkout </button>
         <br>
         <div v-if="showcart">
             <Div v-if="cartCount==0" style="display: grid; place-items: center; height: 100vh;">
