@@ -10,38 +10,42 @@
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-
-    <div id="app">
-        <header>
-            <h1>{{sitename}}</h1>
+    <div id="app"><!--Creating the vue app -->
+        <header><!--Header of the page -->
+            <h1>{{sitename}}</h1><!--Title of the page -->
         </header>
+        <!--Button for checkout -->
         <button v-if="cartCount<1 && !showcart" disabled="disabled"> {{cartCount}} <i class="fa-solid fa-cart-shopping"></i>Checkout </button>
         <button v-else v-on:click="clickCart()"> {{cartCount}} <i class="fa-solid fa-cart-shopping"></i>Checkout </button>
         <br>
         <div v-if="showcart">
-            <div v-if="cartCount == 0" class="cart-container">
+            <!-- if showcart is true then show the cart-->
+            <div v-if="cartCount == 0" class="cart-container"><!--If the cart is empty -->
+                <!--Image for empty cart -->
                 <img src="https://img.freepik.com/premium-vector/shopping-cart-with-cross-mark-wireless-paymant-icon-shopping-bag-failure-paymant-sign-online-shopping-vector_662353-912.jpg" alt="Cart is empty" class="cart-image">
               </div>
-            <div v-else>
+            <div v-else><!--If the cart is not empty -->
                 <div v-for="lesson in lessons">
-                    <div v-if="cart[lesson.id] > 0" style="display: flex; align-items: center; gap: 20px;">
+                    <div v-if="cart[lesson.id] > 0" style="display: flex; align-items: center; gap: 20px;"><!--For each lesson in the cart -->
                         <div style="flex: 1; max-width: 25%;">
-                            <img :src="lesson.image" alt="Cat Image" width="100%">
+                            <!--Image of the lesson -->
+                            <img :src="lesson.image" alt="Lesson Image" width="100%">
                         </div>
                         <div style="flex: 2;max-width: 75%;">
+                            <!--Details of the lesson -->
                             <h2>{{lesson.title}}</h2>
                             <h4>{{lesson.description}}</h4>
                             <h5>{{lesson.location}}</h5>
                             <p>Price: £{{lesson.price}}</p>
                             Quantity:
-                            <button v-on:click="removeFromCart(lesson.id)">-</button>
+                            <button v-on:click="removeFromCart(lesson.id)">-</button><!--Button to remove from cart -->
                             {{cart[lesson.id]}}
-                            <button v-on:click="addToCart(lesson.id)" v-if="canAddToCart(lesson.id)">+</button>
-                            <button disabled="disabled" v-else>+</button>
+                            <button v-on:click="addToCart(lesson.id)" v-if="canAddToCart(lesson.id)">+</button><!--Button to add to cart if stock available-->
+                            <button disabled="disabled" v-else>+</button><!--Button to add to cart disabled as stock not available-->
                         </div>
                     </div>
                 </div>
-                <h3>Your total is: £{{cartTotal}}</h3>
+                <h3>Your total is: £{{cartTotal}}</h3><!--Total price of items in the cart -->
                 <h3>Enter your details to place your order:</h3>
                 <div class="input-container">
                     <strong>Full Name:</strong>
@@ -61,12 +65,14 @@
                     <strong>Phone Number:</strong>
                     <strong>{{order.phone_number}}</strong>
                 </div>
-                <button v-if="placeordercheck" v-on:click="place_order()">Place order</button>
-                <button disabled="disabled" v-else>Place order</button>
+                <button v-if="placeordercheck" v-on:click="place_order()">Place order</button><!--Button to place order -->
+                <button disabled="disabled" v-else>Place order</button><!--Button to place order disabled as details not entered correctly-->
              </div>
         </div>
         <div v-else>
+            <!-- if showcart is false then show the lessons-->
             <div>
+                <!--Search bar and sort buttons -->
                 <input type="text" v-model="search_query" placeholder="search">
                 <button v-on:click="search_query=''">Clear</button>
                 <br>
@@ -88,45 +94,30 @@
                 <div v-if="sort_by != ''">
                     <h3>Sorted by {{sort_by}}: {{sortMethod}}</h3>
                 </div>
+                <!--Display the lessons-->
                 <div v-for="lesson in sortedLessons">
+                    <!--For each lesson in sortedLessons -->
                     <div style="display: flex; align-items: center; gap: 20px;">
                         <div style="flex: 1; max-width: 25%;">
-                            <img :src="lesson.image" alt="Cat Image" width="100%">
+                            <!--Image of the lesson -->
+                            <img :src="lesson.image" alt="Lesson Image" width="100%">
                         </div>
                         <div style="flex: 2;max-width: 75%;">
+                            <!--Details of the lesson -->
                             <h2>{{lesson.title}}</h2>
                             <h4>{{lesson.description}}</h4>
                             <h5>{{lesson.location}}</h5>
                             <p>Price: £{{lesson.price}}</p>
                             <p>Stock Remaining: {{stockLevel(lesson.id)}}</p>
-                            <button v-on:click="addToCart(lesson.id)" v-if="canAddToCart(lesson.id)">Add to cart</button>
-                            <button disabled="disabled" v-else>Add to cart</button>
-                            <p v-if="stockLevel(lesson.id) == 0">Out of Stock</p>
-                            <p v-else-if="stockLevel(lesson.id) < 3" style="color: red;">Hurry! Only {{stockLevel(lesson.id)}} left in stock.</p>
-                            <p v-else>In Stock</p>
+                            <button v-on:click="addToCart(lesson.id)" v-if="canAddToCart(lesson.id)">Add to cart</button><!--Button to add to cart if stock available-->
+                            <button disabled="disabled" v-else>Add to cart</button><!--Button to add to cart disabled as stock not available-->
+                            <p v-if="stockLevel(lesson.id) == 0">Out of Stock</p><!--Display out of stock if stock is 0 -->
+                            <p v-else-if="stockLevel(lesson.id) < 3" style="color: red;">Hurry! Only {{stockLevel(lesson.id)}} left in stock.</p><!--Display stock level in red if stock is less than 3 with a only left message-->
+                            <p v-else>In Stock</p><!--Display in stock if stock is greater than or equal to 3 -->
                         </div>
                     </div>
                 </div>
-
             </div>
-            <!--
-            <div v-for="lesson in lessons" style="display: flex; align-items: center; gap: 20px;">
-                <div style="flex: 1; max-width: 25%;">
-                    <img :src="lesson.image" alt="Cat Image" width="100%">
-                </div>
-                <div style="flex: 2;max-width: 75%;">
-                    <h2>{{lesson.title}}</h2>
-                    <h4>{{lesson.description}}</h4>
-                    <h5>{{lesson.location}}</h5>
-                    <p>Price: £{{lesson.price}}</p>
-                    <button v-on:click="addToCart(lesson.id)" v-if="canAddToCart(lesson.id)">Add to cart</button>
-                    <button disabled="disabled" v-else>Add to cart</button>
-                    <p v-if="stockLevel(lesson.id) == 0">Out of Stock</p>
-                    <p v-else-if="stockLevel(lesson.id) < 3" style="color: red;">Hurry! Only {{stockLevel(lesson.id)}} left in stock.</p>
-                    <p v-else>In Stock</p>
-                </div>
-            </div>
-            -->
         </div>
     </div>
     <script type="module">
