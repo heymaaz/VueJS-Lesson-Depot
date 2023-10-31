@@ -7,6 +7,7 @@
     <title>VueJS Lesson Depot</title>
     <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
     <script src="https://kit.fontawesome.com/50328cb347.js" crossorigin="anonymous"></script>
+    <script src="./lessons.js"></script>
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
@@ -120,9 +121,140 @@
             </div>
         </div>
     </div>
-    <script type="module">
-        import lessonsData from './lessons.js';
-    
+    <script>
+        //Creating the vue app
+        var app = new Vue({
+            el: '#app',
+            data: {
+                lessons: lessonsData,
+                    sitename: 'VueJS Lesson Depot',
+                    cart: Array(lessonsData.length+1).fill(0),
+                    showcart: false,
+                    order: {
+                        full_name: '',
+                        phone_number: ''
+                    },
+                    search_query: '',
+                    sort_by: '',
+                    sort_desc: false
+            },
+            methods: {
+                addToCart(id) {
+                    console.log(`Adding to cart: ID=${id}`);
+                    this.$set(this.cart, id, this.cart[id] + 1);
+                },
+                setSortBy(sort_by) {
+                    this.sort_by = sort_by;
+                },
+                removeFromCart(id) {
+                    console.log(`Removing from cart: ID=${id}`);
+                    this.$set(this.cart, id, this.cart[id] - 1);
+                },
+                canAddToCart(id){
+                    return this.lessons[id-1].availableInventory > this.cart[id];
+                },
+                stockLevel(id) {
+                    return this.lessons[id-1].availableInventory - this.cart[id];
+                },
+                clickCart() {
+                    this.showcart = !this.showcart;
+                },
+                place_order() {
+                    alert("Order placed!");
+                    //this.cart = Array(lessonsData.length+1).fill(0);
+                    //this.showcart = false;
+                    //reload the page
+                    location.reload();
+                }
+            },
+            computed: {
+                cartCount() {
+                    let sum = 0;
+                    for(let i = 0; i < this.cart.length; i++){
+                        sum += this.cart[i];
+                    }
+                    return sum||"";
+                },
+                cartTotal() {
+                    let sum = 0;
+                    for(let i = 1; i < this.cart.length; i++){
+                        sum += this.cart[i] * this.lessons[i-1].price;
+                    }
+                    return sum.toFixed(2)||"";
+                },
+                placeordercheck() {
+                    if(this.order.full_name == '' || this.order.phone_number =='')
+                        return false;
+                    return RegExp(/^[a-zA-Z ]+$/).test(this.order.full_name)&&RegExp(/^[0-9]+$/).test(this.order.phone_number);
+                },
+                filteredLessons() {
+                    return this.lessons.filter(lesson => {
+                        return lesson.title.toLowerCase().includes(this.search_query.toLowerCase())
+                        || lesson.description.toLowerCase().includes(this.search_query.toLowerCase())
+                        || lesson.location.toLowerCase().includes(this.search_query.toLowerCase())
+                    });
+                },
+                sortMethod() {
+                    if(this.sort_desc)
+                        return "Descending";
+                    return "Ascending";
+                },
+                sortedLessons() {
+                    if(this.sort_by == 'Title')
+                        if(this.sort_desc){
+                            return this.filteredLessons.sort((b, a) => {
+                                return a.title.localeCompare(b.title);
+                            });
+                        }
+                        else{
+                            return this.filteredLessons.sort((a, b) => {
+                                return a.title.localeCompare(b.title);
+                            });
+                        }
+                        
+                    else if(this.sort_by == 'Price')
+                        if(this.sort_desc){
+                            return this.filteredLessons.sort((b, a) => {
+                                return a.price - b.price;
+                            });
+                        }
+                        else{
+                            return this.filteredLessons.sort((a, b) => {
+                                return a.price - b.price;
+                            });
+                        }
+                    else if(this.sort_by == 'Location')
+                        if(this.sort_desc){
+                            return this.filteredLessons.sort((b, a) => {
+                                return a.location.localeCompare(b.location);
+                            });
+                        }
+                        else{
+                            return this.filteredLessons.sort((a, b) => {
+                                return a.location.localeCompare(b.location);
+                            });
+                        }
+                    else if(this.sort_by == 'Availability')
+                        if(this.sort_desc){
+                            return this.filteredLessons.sort((b, a) => {
+                                return this.stockLevel(a.id) - this.stockLevel(b.id);
+                            });
+                        }
+                        else{
+                            return this.filteredLessons.sort((a, b) => {
+                                return this.stockLevel(a.id) - this.stockLevel(b.id);
+                            });
+                        }
+                    else{
+                        return this.filteredLessons.sort((a, b) => {
+                                return a.id - b.id;
+                    });
+                    }
+                        
+                }
+            }
+        });
+        /*
         const app = new Vue({
             el: '#app',
             data() {
@@ -254,6 +386,7 @@
                 }
             }
         });
+        */
     </script>
 </body>
 </html>

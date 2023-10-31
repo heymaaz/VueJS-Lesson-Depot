@@ -1,5 +1,4 @@
-// lessons.js
-const lessonsData = [
+let lessonsData = [
     {
         "id": 1,
         "title": "Introduction to HTML",
@@ -93,4 +92,3 @@ const lessonsData = [
     }
 ];
 
-export default lessonsData;
