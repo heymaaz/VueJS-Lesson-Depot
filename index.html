@@ -98,6 +98,7 @@
                             <h4>{{lesson.description}}</h4>
                             <h5>{{lesson.location}}</h5>
                             <p>Price: £{{lesson.price}}</p>
+                            <p>Stock Remaining: {{stockLevel(lesson.id)}}</p>
                             <button v-on:click="addToCart(lesson.id)" v-if="canAddToCart(lesson.id)">Add to cart</button>
                             <button disabled="disabled" v-else>Add to cart</button>
                             <p v-if="stockLevel(lesson.id) == 0">Out of Stock</p>
