@@ -2,10 +2,132 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Task 1</title>
+    <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
+    <script src="https://kit.fontawesome.com/50328cb347.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    
+
+    <div id="app">
+        <header>
+            <h1>{{sitename}}</h1>
+        </header>
+        <button> {{cartCount}} <i class="fa-solid fa-cart-shopping"></i>Checkout </button>
+        <br>
+        <div v-for="lesson in lessons">
+            <span style="margin-left: 0%;">
+                <img :src="https://i0.wp.com/www.jamiesale-cartoonist.com/wp-content/uploads/cartoon-cat-free.png" alt="Lesson Image" width="25%">
+            </span>
+            <span style="margin-left: auto; vertical-align: top;">
+                <h2>{{lesson.title}}</h2>
+                <h4>{{lesson.description}}</h4>
+                <h5>{{lesson.location}}</h5>
+                <p>Price: ${{lesson.price}}</p>
+                <button v-on:click="addToCart(lesson.id)">Add to cart</button>
+                <p v-if="stockLevel == 0">Out of Stock</p>
+                <p v-else-if="stockLevel < 3">Hurry! Only {{stockLevel}} left in stock.</p>
+                <p v-else>In Stock</p>
+            </span>
+        </div>
+
+        <div v-for="pet in pets">
+            <span style="margin-left: 0%;">
+                <img :src="pet.image" alt="Cat Image" width="25%">
+            </span>
+            <span style="margin-left: auto; vertical-align: top;">
+                <h2>{{pet.name}}</h2>
+                <h4>{{pet.description}}</h4>
+                <p>Price: ${{pet.price}}</p>
+                <button v-on:click="addToCart(pet.id)">Add to cart</button>
+                <p>In Stock</p>
+                <!--
+                <p v-if="stockLevel == 0">Out of Stock</p>
+                <p v-else-if="stockLevel < 10">Hurry! Only {{stockLevel}} left in stock.</p>
+                <p v-else>In Stock</p>
+                -->
+            </span>
+        </div>
+        <!---Create a ecom page with the image on the left and text on the right
+            <span style="margin-left: 0%;">
+                <img :src="pet.image" alt="Cat Image" width="25%">
+            </span>
+            <span style="margin-left: auto; vertical-align: top;">
+                <h2>{{pet.name}}</h2>
+                <h4>{{pet.description}}</h4>
+                <p>Price: ${{pet.price}}</p>
+                <button v-on:click="addToCart" v-if="canAddToCart">Add to cart</button>
+                <button disabled="disabled" v-else>Add to cart</button>
+                <p v-if="stockLevel == 0">Out of Stock</p>
+                <p v-else-if="stockLevel < 10">Hurry! Only {{stockLevel}} left in stock.</p>
+                <p v-else>In Stock</p>
+            </span>
+            -->
+    </div>
+    <script>
+        import lessonsData from './lessons.json';
+        export default {
+            data() {
+                return {
+                    lessons : lessonsData,
+                };
+            },
+        };
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                sitename: 'VueJS Pet Depot',
+                //lessons : lessonsData,
+                pets: [
+                    {
+                        id: 1,
+                        name: 'Cat Food',
+                        description: 'A 25 pound bag of irresistible, organic goodness for your cat.',
+                        price: 20,
+                        image: 'https://i0.wp.com/www.jamiesale-cartoonist.com/wp-content/uploads/cartoon-cat-free.png',
+                        availableInventory: 10
+                    },
+                    {
+                        id: 2,
+                        name: 'Dog Food',
+                        description: 'A 25 pound bag of irresistible, organic goodness for your cat.',
+                        price: 30,
+                        image: 'https://i0.wp.com/www.jamiesale-cartoonist.com/wp-content/uploads/cartoon-cat-free.png',
+                        availableInventory: 10
+                    }
+                ]
+                ,
+                /*pet:
+                {
+                    id: 1,
+                    name: 'Cat Food',
+                    description: 'A 25 pound bag of irresistible, organic goodness for your cat.',
+                    price: 20,
+                    image: 'https://i0.wp.com/www.jamiesale-cartoonist.com/wp-content/uploads/cartoon-cat-free.png',
+                    availableInventory: 10
+                },*/
+                cart: []
+            },
+            methods: {
+                addToCart: function(id){
+                    /*this.cart.push(this.pet.id);*/
+                    this.cart.push(id);
+                }
+            },
+            computed: {
+                cartCount: function(){
+                    return this.cart.length||"";
+                },
+                canAddToCart: function(){
+                    return this.pets.availableInventory > this.cartCount;
+                },
+                stockLevel: function(){
+                    return this.pets.availableInventory - this.cartCount;
+                }
+            }
+        })
+    </script>
 </body>
 </html>
