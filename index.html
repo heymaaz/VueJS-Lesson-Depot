@@ -19,9 +19,9 @@
         <button v-else v-on:click="clickCart()"> {{cartCount}} <i class="fa-solid fa-cart-shopping"></i>Checkout </button>
         <br>
         <div v-if="showcart">
-            <Div v-if="cartCount==0" style="display: grid; place-items: center; height: 100vh;">
-                <img src="https://img.freepik.com/premium-vector/shopping-cart-with-cross-mark-wireless-paymant-icon-shopping-bag-failure-paymant-sign-online-shopping-vector_662353-912.jpg" alt="Cart is empty" style="object-fit: cover;">
-            </Div>
+            <div v-if="cartCount == 0" class="cart-container">
+                <img src="https://img.freepik.com/premium-vector/shopping-cart-with-cross-mark-wireless-paymant-icon-shopping-bag-failure-paymant-sign-online-shopping-vector_662353-912.jpg" alt="Cart is empty" class="cart-image">
+              </div>
             <div v-else>
                 <div v-for="lesson in lessons">
                     <div v-if="cart[lesson.id] > 0" style="display: flex; align-items: center; gap: 20px;">
