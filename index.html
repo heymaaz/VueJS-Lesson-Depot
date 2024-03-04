@@ -15,10 +15,27 @@
     <div id="app"><!--Creating the vue app -->
         <header><!--Header of the page -->
             <h1>{{sitename}}</h1><!--Title of the page -->
+             <!--Button for checkout -->
+            <button v-if="cartCount<1 && !showcart" disabled="disabled"> {{cartCount}} <i class="fa-solid fa-cart-shopping"></i>Checkout </button>
+            <button v-else v-on:click="clickCart()"> {{cartCount}} <i class="fa-solid fa-cart-shopping"></i>Checkout </button>
+            <button @click="showTestConsole=!showTestConsole">
+                <span class="fas fa-terminal"></span>
+                Show Test Console
+            </button>
+            <br>
+            <button v-if="showTestConsole" @click="deleteAllCaches" class="test-elem">
+                <span class="fas fa-trash"></span>
+                Delete All Caches
+            </button>
+            <button v-if="showTestConsole" @click="unregisterAllServiceWorkers" class="test-elem">
+                <span class="fab fa-uniregistry"></span>
+                Unregister All ServiceWorkers
+            </button>
+            <button v-if="showTestConsole" @click="reloadPage" class="test-elem">
+                <span class="fas fa-sync"></span>
+                Reload Page
+            </button>
         </header>
-        <!--Button for checkout -->
-        <button v-if="cartCount<1 && !showcart" disabled="disabled"> {{cartCount}} <i class="fa-solid fa-cart-shopping"></i>Checkout </button>
-        <button v-else v-on:click="clickCart()"> {{cartCount}} <i class="fa-solid fa-cart-shopping"></i>Checkout </button>
         <br>
         <div v-if="showcart">
             <!-- if showcart is true then show the cart-->
@@ -97,14 +114,12 @@
                     <h3>Sorted by {{sort_by}}: {{sortMethod}}</h3><!--Display the sort by query -->
                 </div>
                 <!--Display the lessons-->
-                <div v-for="lesson in sortedLessons"><!--For each lesson in sortedLessons -->
-                    <!--For each lesson in sortedLessons -->
-                    <div style="display: flex; align-items: center; gap: 20px;">
-                        <div style="flex: 1; max-width: 25%;">
-                            <!--Image of the lesson -->
-                            <img :src="lesson.image" alt="Lesson Image" width="100%">
+                <div class="products_container">
+                    <div v-for="lesson in sortedLessons" class="product_card"><!--For each item in items-->
+                        <div>
+                            <img :src="lesson.image" alt="Lesson Image"><!--Image of the lesson-->
                         </div>
-                        <div style="flex: 2;max-width: 75%;">
+                        <div>
                             <!--Details of the lesson -->
                             <h2>{{lesson.title}}</h2><!--Title of the lesson -->
                             <h4>{{lesson.description}}</h4><!--Description of the lesson -->
@@ -137,7 +152,8 @@
                     },
                     search_query: '',//Initialising the search query
                     sort_by: '',//Initialising the sort_by
-                    sort_desc: false//Boolean for sort in ascending or descending order
+                    sort_desc: false,//Boolean for sort in ascending or descending order
+                    showTestConsole: false
             },
             created: function() {
                 if ("serviceWorker" in navigator) {
@@ -145,6 +161,24 @@
                 }
             },
             methods: {
+                deleteAllCaches() {
+                    caches.keys().then(function(names) {
+                        for (let name of names)
+                            caches.delete(name);
+                        });
+                    console.log("All Caches Deleted");
+                },
+                unregisterAllServiceWorkers() {
+                    navigator.serviceWorker.getRegistrations().then(function (registrations) {
+                        for (let registration of registrations) {
+                            registration.unregister()
+                        }
+                    });
+                    console.log("ServiceWorkers Unregistered");
+                },
+                reloadPage() {
+                    window.location.reload();
+                },
                 addToCart(id) {
                     console.log(`Adding to cart: ID=${id}`);//Logging the id of the lesson added to cart
                     this.$set(this.cart, id, this.cart[id] + 1);//Adding the lesson to cart
