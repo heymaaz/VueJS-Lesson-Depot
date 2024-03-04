@@ -139,6 +139,11 @@
                     sort_by: '',//Initialising the sort_by
                     sort_desc: false//Boolean for sort in ascending or descending order
             },
+            created: function() {
+                if ("serviceWorker" in navigator) {
+                    navigator.serviceWorker.register("service-worker.js");
+                }
+            },
             methods: {
                 addToCart(id) {
                     console.log(`Adding to cart: ID=${id}`);//Logging the id of the lesson added to cart
